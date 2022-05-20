@@ -114,10 +114,7 @@ class GaussianMixtureSGD(object):
             learning_rate=self.learning_rate)
         train_op = self._optimizer.minimize(self._loss)
 
-        if self.session is None:
-            session = tf.InteractiveSession()
-        else:
-            session = self.session
+        session = tf.InteractiveSession() if self.session is None else self.session
         session.run(tf.initialize_all_variables())
         for name, variables in self._component_variables.items():
             print(name)

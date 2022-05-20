@@ -118,10 +118,7 @@ class MLP(nn.Module):
         return F.log_softmax(self.output_linear(x))
 
 
-if args.mlp:
-    model = MLP(hidden=[args.hidden_dim] * args.depth)
-else:
-    model = ConvNet()
+model = MLP(hidden=[args.hidden_dim] * args.depth) if args.mlp else ConvNet()
 if args.cuda:
     model.cuda()
 
