@@ -9,8 +9,8 @@ from sklearn.grid_search import ParameterGrid
 
 MSLR_DATA = '/scratch/ogrisel/mslr-web10k_fold1.npz'
 DATA_FOLDER = '/home/parietal/ogrisel/data'
-TRAIN_SAMPLE_DATA = DATA_FOLDER + '/mslr-web10k_fold1_train_500.pkl'
-VALI_DATA = DATA_FOLDER + '/mslr-web10k_fold1_vali.pkl'
+TRAIN_SAMPLE_DATA = f'{DATA_FOLDER}/mslr-web10k_fold1_train_500.pkl'
+VALI_DATA = f'{DATA_FOLDER}/mslr-web10k_fold1_vali.pkl'
 GRID_JOBS_FOLDER = '/scratch/ogrisel/grid_jobs'
 
 rng = Random(42)
@@ -52,20 +52,20 @@ params = {
     'learning_rate': [0.05, 0.1, 0.5],
 }
 
-for i, param in enumerate(ParameterGrid(params)):
+for param in ParameterGrid(params):
     params_description = json.dumps(param)
     job_id = joblib.hash(params_description)
-    job_folder = GRID_JOBS_FOLDER + '/' + job_id
+    job_folder = f'{GRID_JOBS_FOLDER}/{job_id}'
     if not os.path.exists(job_folder):
         os.makedirs(job_folder)
-    with open(job_folder + '/parameters.json', 'wb') as f:
+    with open(f'{job_folder}/parameters.json', 'wb') as f:
         f.write(params_description.encode('utf-8'))
 
     data_filenames = {'train': TRAIN_SAMPLE_DATA, 'validation': VALI_DATA}
-    with open(job_folder + '/data.json', 'wb') as f:
+    with open(f'{job_folder}/data.json', 'wb') as f:
         f.write(json.dumps(data_filenames).encode('utf-8'))
 
-    cmd = 'qsub -V -cwd letor_gridpoint.py {}'.format(job_folder)
+    cmd = f'qsub -V -cwd letor_gridpoint.py {job_folder}'
     os.system(cmd)
 
     # if i > 100:

@@ -17,13 +17,13 @@ def collect_results(jobs_folder):
                 or not op.exists(results_filename)):
             continue
 
-        new_entry = dict()
+        new_entry = {}
 
         with open(parameters_filename, 'r') as f:
-            new_entry.update(json.load(f))
+            new_entry |= json.load(f)
 
         with open(results_filename, 'r') as f:
-            new_entry.update(json.load(f))
+            new_entry |= json.load(f)
 
         entries.append(new_entry)
 

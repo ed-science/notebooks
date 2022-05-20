@@ -52,10 +52,10 @@ def mean_ndcg(y_true, y_pred, query_ids, rank=10):
 
 
 job_folder = sys.argv[1]
-with open(job_folder + '/parameters.json', 'r') as f:
+with open(f'{job_folder}/parameters.json', 'r') as f:
     parameters = json.load(f)
 
-with open(job_folder + '/data.json', 'r') as f:
+with open(f'{job_folder}/data.json', 'r') as f:
     data_filenames = json.load(f)
 
 
@@ -92,15 +92,15 @@ y_pred = model.predict(X_vali)
 validation_score = mean_ndcg(y_vali, y_pred, qid_vali)
 print("{:.3f}".format(validation_score))
 
-model_filename = job_folder + '/model.pkl'
-print("Saving model to {}".format(model_filename))
+model_filename = f'{job_folder}/model.pkl'
+print(f"Saving model to {model_filename}")
 tic = time()
 model_filenames = joblib.dump(model, model_filename)
 model_save_time = time() - tic
 print("done in{:.3f}s".format(model_save_time))
-model_size_bytes = 0
-for filename in model_filenames:
-    model_size_bytes += os.stat(filename).st_size
+model_size_bytes = sum(
+    os.stat(filename).st_size for filename in model_filenames
+)
 
 results = {
     'data_load_time': data_load_time,
@@ -113,5 +113,5 @@ results = {
     'model_filename': model_filename,
 }
 
-with open(job_folder + '/results.json', 'wb') as f:
+with open(f'{job_folder}/results.json', 'wb') as f:
     f.write(json.dumps(results).encode('utf-8'))
